@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace PlanHub.WebApi.Controllers
 {
+    [ApiController]
     public class ObjectiveController : ControllerBase
     {
         private readonly ICommandHandlerAsync<AddNewObjectiveCommand> _addNewObjectiveCommandHandler;
@@ -16,15 +17,13 @@ namespace PlanHub.WebApi.Controllers
             _addNewObjectiveCommandHandler = addNewObjectiveCommandHandler;
         }
 
-        [HttpPost]
-        [Route("/api/objective/{objectiveId}")]
+        [HttpPost("/api/objective/{objectiveId}")]
         public async Task UpdateObjective(Objective objective)
         {
             throw new NotImplementedException();
         }
 
-        [HttpPost]
-        [Route("/api/objective/add")]
+        [HttpPost("/api/objective/add")]
         public async Task AddObjective(NewObjectiveRequestModel newObjective)
         {
             // Typically a bad idea to generate a new random Guid. We would want a sequential Guid (now GuidComb in dotnet core)

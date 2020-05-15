@@ -1,5 +1,15 @@
-﻿CREATE TABLE TeamMember (
-	[TeamMemberId] UNIQUEIDENTIFIER,
+﻿CREATE TABLE Team (
+	[TeamId] UNIQUEIDENTIFIER,
+	[TeamName] NVARCHAR(100) NOT NULL,
+	CONSTRAINT [PK_Team] PRIMARY KEY CLUSTERED
+	(
+		[TeamId] ASC
+	)
+)
+
+CREATE TABLE TeamMember (
+	[TeamMemberId] UNIQUEIDENTIFIER NOT NULL,
+	[TeamId] UNIQUEIDENTIFIER NOT NULL,
 	[FirstName] NVARCHAR(50) NOT NULL,
 	[MiddleName] NVARCHAR(50),
 	[LastName] NVARCHAR(50) NOT NULL,
@@ -10,32 +20,6 @@
 		[TeamMemberId] ASC
 	)
 )
-
-CREATE TABLE Team (
-	[TeamId] UNIQUEIDENTIFIER,
-	[TeamName] NVARCHAR(100) NOT NULL,
-	CONSTRAINT [PK_Team] PRIMARY KEY CLUSTERED
-	(
-		[TeamId] ASC
-	)
-)
-
--- Team members can belong to only one team
-CREATE TABLE TeamMembership (
-	[TeamMemberId] UNIQUEIDENTIFIER NOT NULL,
-	[TeamId] UNIQUEIDENTIFIER NOT NULL,
-	CONSTRAINT [PK_TeamMembership] PRIMARY KEY CLUSTERED
-	(
-		[TeamMemberId] ASC,
-		[TeamId] ASC
-	)
-)
-
-ALTER TABLE TeamMembership WITH CHECK ADD CONSTRAINT [FK_TeamMembership_TeamMemberId] FOREIGN KEY([TeamMemberId])
-REFERENCES [dbo].[TeamMember] ([TeamMemberId])
-
-ALTER TABLE TeamMembership WITH CHECK ADD CONSTRAINT [FK_TeamMembership_TeamId] FOREIGN KEY([TeamId])
-REFERENCES [dbo].[Team] ([TeamId])
 
 -- Team members can have only one manager
 CREATE TABLE OrganizationChart (

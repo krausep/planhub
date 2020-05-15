@@ -1,5 +1,4 @@
-﻿using Kledex.Commands;
-using Kledex.Queries;
+﻿using Kledex.Queries;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using PlanHub.ReadModels.Okrs;
@@ -9,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace PlanHub.WebApi.Controllers
 {
+    [ApiController]
     public class OkrController : ControllerBase
     {
         private readonly ILogger<OkrController> _logger;
@@ -20,10 +20,10 @@ namespace PlanHub.WebApi.Controllers
             _okrQueryHandler = okrQueryHandler;
         }
 
-        [HttpGet]
-        [Route("api/okrs/team/{teamId}")]
+        [HttpGet("api/okrs/team/{teamId}")]
         public async Task<IActionResult> GetOkrsForTeam(Guid teamId)
         {
+            _logger.LogDebug($"Handling GET request for teamId {teamId}");
             var results = await _okrQueryHandler.HandleAsync(new GetOkrsForTeamQuery(teamId));
 
             return Ok(results);

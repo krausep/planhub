@@ -9,16 +9,16 @@ namespace PlanHub.Domain.Teams
     {
         public Guid TeamId { get; }
         public string TeamName { get; private set; }
-        public Guid TeamManagerId { get; }
+        public Guid TeamManagerId { get; private set; }
 
-        public List<TeamMembership> TeamMembership { get; }
+        public List<TeamMember> TeamMembers { get; }
 
-        public Team(Guid teamId, string teamName, Guid teamManagerId, List<TeamMembership> teamMembership)
+        public Team(Guid teamId, string teamName, Guid teamManagerId, List<TeamMember> teamMembers)
         {
             TeamId = teamId;
             TeamName = teamName;
             TeamManagerId = teamManagerId;
-            TeamMembership = teamMembership;
+            TeamMembers = teamMembers;
         }
 
         public void ChangeTeamName(string newTeamName)
@@ -40,13 +40,8 @@ namespace PlanHub.Domain.Teams
 
         public void ChangeTeamManager(Guid newTeamManagerId)
         {
-
-        }
-
-        internal void AddNewTeamMember(Guid newTeamMemberId)
-        {
-            TeamMembership.Add(new Teams.TeamMembership(TeamId, newTeamMemberId));
-            RaiseEvent(new TeamMemberAddedEvent(TeamId, newTeamMemberId));
+            TeamManagerId = newTeamManagerId;
+            RaiseEvent(new TeamManagerChangedEvent(newTeamManagerId));
         }
     }
 }

@@ -11,7 +11,7 @@ namespace PlanHub.Domain.Tests
         [TestMethod]
         public void TeamMember_FirstNameChange()
         {
-            var teamMember = new TeamMember(Guid.NewGuid(), "abc", null, "def", "sir", false);
+            var teamMember = new TeamMember(Guid.NewGuid(), Guid.NewGuid(), "abc", null, "def", "sir", false);
 
             teamMember.ChangeFirstName("cba");
 
@@ -23,7 +23,7 @@ namespace PlanHub.Domain.Tests
         public void TeamMember_FirstNameCannotBeEmpty()
         {
             // assuming valid team member to start with
-            var teamMember = new TeamMember(Guid.NewGuid(), "abc", null, "def", "sir", false);
+            var teamMember = new TeamMember(Guid.NewGuid(), Guid.NewGuid(), "abc", null, "def", "sir", false);
 
             teamMember.ChangeFirstName("");
         }
@@ -33,7 +33,7 @@ namespace PlanHub.Domain.Tests
         public void TeamMember_FirstNameCannotBeNull()
         {
             // assuming valid team member to start with
-            var teamMember = new TeamMember(Guid.NewGuid(), "abc", null, "def", "sir", false);
+            var teamMember = new TeamMember(Guid.NewGuid(), Guid.NewGuid(), "abc", null, "def", "sir", false);
 
             teamMember.ChangeFirstName(null);
         }
@@ -42,7 +42,7 @@ namespace PlanHub.Domain.Tests
         public void TeamMember_FirstNameCanBe50Characters()
         {
             // assuming valid team member to start with
-            var teamMember = new TeamMember(Guid.NewGuid(), "abc", null, "def", "sir", false);
+            var teamMember = new TeamMember(Guid.NewGuid(), Guid.NewGuid(), "abc", null, "def", "sir", false);
 
             teamMember.ChangeFirstName("12345678901234567890123456789012345678901234567890");
         }
@@ -52,7 +52,7 @@ namespace PlanHub.Domain.Tests
         public void TeamMember_FirstNameCannotBeGreaterThan50Characters()
         {
             // assuming valid team member to start with
-            var teamMember = new TeamMember(Guid.NewGuid(), "abc", null, "def", "sir", false);
+            var teamMember = new TeamMember(Guid.NewGuid(), Guid.NewGuid(), "abc", null, "def", "sir", false);
 
             teamMember.ChangeFirstName("12345678901234567890123456789012345678901234567890!");
         }

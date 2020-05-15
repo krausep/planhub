@@ -17,11 +17,33 @@ namespace PlanHub.Data.Repositories
         private readonly IConfiguration _configuration;
         private readonly ILogger<TeamRepository> _logger;
 
-        private static string GetByTeamIdSql = "SELECT TeamId, TeamName FROM Team WHERE TeamId = @teamId";
+        private static string GetAllTeamsSql = @"
+SELECT
+    TeamId, TeamName
+FROM
+    Team;
+
+SELECT
+    TeamMemberId, FirstName, MiddleName, LastName, Title, IsManager
+FROM
+    TeamMember;";
+
+        private static string GetByTeamIdSql = @"
+SELECT
+    TeamId, TeamName
+FROM
+    Team
+WHERE
+    TeamId = @teamId;
+
+SELECT
+    TeamMemberId, FirstName, MiddleName, LastName, Title, IsManager
+FROM
+    TeamMember
+WHERE
+    TeamId = @teamId";
+
         private static string GetAllSql = "SELECT TeamId, TeamName FROM Team ORDER BY TeamName";
-        private static string GetTeamMembersByTeamIdSql = "SELECT TeamMemberId, TeamId FROM TeamMembership WHERE TeamId = @teamId";
-        private static string GetTeamMembersSql = "SELECT TeamMemberId, TeamId FROM TeamMembership";
-        private static string AddTeamMemberSql = "INSERT INTO TeamMembership(TeamMemberId, TeamId) VALUES (@teamMemberId, @teamId)";
         private static string UpdateTeamSql = @"UPDATE Team SET TeamName = @teamName WHERE TeamId = @teamId";
 
         public TeamRepository(IConfiguration configuration, ILogger<TeamRepository> logger)
@@ -34,11 +56,15 @@ namespace PlanHub.Data.Repositories
         {
             using (var connection = new SqlConnection(_configuration.GetConnectionString("PlanHub")))
             {
-                var team = await connection.QueryFirstAsync<Team>(GetByTeamIdSql, new { teamId });
+                using(var results = await connection.QueryMultipleAsync(GetByTeamIdSql, new { teamId }))
+                {
+                    var team = results.ReadSingle<Team>();
 
-                var teamMembers = (await connection.QueryAsync<TeamMembership>(GetTeamMembersByTeamIdSql)).ToList();
+                    var teamMembers = results.Read<TeamMember>().ToList();
 
-                return new Team(team.TeamId, team.TeamName, team.TeamManagerId, teamMembers);
+                    return new Team(team.TeamId, team.TeamName, team.TeamManagerId, teamMembers);
+                }
+
             }
         }
 
@@ -46,18 +72,22 @@ namespace PlanHub.Data.Repositories
         {
             using(var connection = new SqlConnection(_configuration.GetConnectionString("PlanHub")))
             {
-                var resultSet = new List<Team>();
-                var teams = (await connection.QueryAsync<Team>(GetAllSql)).ToList();
-
-                var teamMembers = (await connection.QueryAsync<TeamMembership>(GetTeamMembersSql)).ToList();
-
-                foreach(var t in teams)
+                
+                using(var results = await connection.QueryMultipleAsync(GetAllTeamsSql))
                 {
-                    var specificTeamMembers = teamMembers.FindAll(tm => tm.TeamId == t.TeamId).ToList();
-                    resultSet.Add(new Team(t.TeamId, t.TeamName, t.TeamManagerId, specificTeamMembers));
-                }
+                    var resultSet = new List<Team>();
+                    var teams = results.Read<Team>().ToList();
 
-                return resultSet;
+                    var teamMembers = results.Read<TeamMember>().ToList();
+
+                    foreach (var t in teams)
+                    {
+                        var specificTeamMembers = teamMembers.FindAll(tm => tm.TeamId == t.TeamId).ToList();
+                        resultSet.Add(new Team(t.TeamId, t.TeamName, t.TeamManagerId, specificTeamMembers));
+                    }
+
+                    return resultSet;
+                }
             }
         }
 
@@ -69,18 +99,6 @@ namespace PlanHub.Data.Repositories
                 {
                     try
                     {
-                        // See if there are any newly added team members
-                        foreach (var @event in team.GetPendingEvents().Where(e => e is TeamMemberAddedEvent))
-                        {
-                            var addedEvent = @event as TeamMemberAddedEvent;
-                            await connection.ExecuteAsync(AddTeamMemberSql,
-                                new
-                                {
-                                    TeamMemberId = addedEvent.NewTeamMemberId,
-                                    addedEvent.TeamId
-                                });
-                        }
-
                         // update the team
                         await connection.ExecuteAsync(UpdateTeamSql, team.TeamId);
                     }

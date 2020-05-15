@@ -14,7 +14,6 @@ namespace PlanHub.Data.Configuration.DependencyInjection
             services.AddTransient<ITeamRepository, TeamRepository>();
             services.AddTransient<IObjectiveRepository, ObjectiveRepository>();
             services.AddTransient<IObjectiveWeightsMustEqual100Service, ObjectiveWeightsMustEqual100Service>();
-            services.AddTransient<ITeamMembershipRepository, TeamMembershipRepository>();
             return services;
         }
     }

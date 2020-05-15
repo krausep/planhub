@@ -45,12 +45,14 @@ ORDER
         {
             using (var connection = new SqlConnection(_configuration.GetConnectionString("PlanHub")))
             {
-                var results = await connection.QueryMultipleAsync(GetSql, new { query.TeamId });
-                var okrTeamModel = results.ReadSingle<GetOkrsForTeamReadModel>();
+                using (var results = await connection.QueryMultipleAsync(GetSql, new { query.TeamId }))
+                {
+                    var okrTeamModel = results.ReadSingle<GetOkrsForTeamReadModel>();
 
-                okrTeamModel.Objectives = results.Read<ObjectiveReadModel>().ToList();
+                    okrTeamModel.Objectives = results.Read<ObjectiveReadModel>().ToList();
 
-                return okrTeamModel;
+                    return okrTeamModel;
+                }
             }
         }
     }

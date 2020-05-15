@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 namespace PlanHub.WebApi.Controllers
 {
     [ApiController]
-    [Route("/api/teams")]
     public class TeamsController : ControllerBase
     {
         private readonly IQueryHandlerAsync<GetTeamsQuery, GetTeamsReadModel> _teamsQueryHandler;
@@ -15,7 +14,7 @@ namespace PlanHub.WebApi.Controllers
             _teamsQueryHandler = teamsQueryHandler;
         }
 
-        [HttpGet]
+        [HttpGet("api/teams")]
         public async Task<IActionResult> GetTeams()
         {
             var results = await _teamsQueryHandler.HandleAsync(new GetTeamsQuery());

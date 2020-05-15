@@ -8,37 +8,25 @@ INSERT INTO Team(TeamId, TeamName) VALUES
 (NEWID(), 'Finance'),
 (NEWID(), 'Sales and Marketing')
 
-INSERT INTO TeamMember(TeamMemberId, FirstName, MiddleName, LastName, Title, IsManager) VALUES
-(NEWID(), 'Bill', null, 'Smith', 'Senior UX Designer', 0),
-(NEWID(), 'Marisol', 'Maria', 'Sanchez', 'Manager of Software Development', 1),
-(NEWID(), 'Maggie', 'Lynn', 'Brown', 'Financial Analyst', 0),
-(NEWID(), 'Tim', 'D.', 'Hart', 'Manager of Finance', 1),
-(NEWID(), 'Robert', null, 'Knight', 'Account Representative', 0),
-(NEWID(), 'Clark', 'Kevin', 'Whitman', 'Manager of Sales', 1)
-
-DECLARE @TeamMemberId UNIQUEIDENTIFIER
 DECLARE @TeamId UNIQUEIDENTIFIER
 
 -- Development Team
 SELECT @TeamId = TeamId FROM Team WHERE TeamName = 'ProductOne Development Team'
-SELECT @TeamMemberId = TeamMemberId FROM TeamMember WHERE FirstName = 'Bill'
-INSERT INTO TeamMembership (TeamMemberId, TeamId) VALUES(@TeamMemberId, @TeamId)
-SELECT @TeamMemberId = TeamMemberId FROM TeamMember WHERE FirstName = 'Marisol'
-INSERT INTO TeamMembership (TeamMemberId, TeamId) VALUES(@TeamMemberId, @TeamId)
+INSERT INTO TeamMember(TeamMemberId, TeamId, FirstName, MiddleName, LastName, Title, IsManager) VALUES
+(NEWID(), @TeamId, 'Bill', null, 'Smith', 'Senior UX Designer', 0),
+(NEWID(), @TeamId, 'Marisol', 'Maria', 'Sanchez', 'Manager of Software Development', 1)
 
 -- Finance Team
 SELECT @TeamId = TeamId FROM Team WHERE TeamName = 'Finance'
-SELECT @TeamMemberId = TeamMemberId FROM TeamMember WHERE FirstName = 'Maggie'
-INSERT INTO TeamMembership (TeamMemberId, TeamId) VALUES(@TeamMemberId, @TeamId)
-SELECT @TeamMemberId = TeamMemberId FROM TeamMember WHERE FirstName = 'Tim'
-INSERT INTO TeamMembership (TeamMemberId, TeamId) VALUES(@TeamMemberId, @TeamId)
+INSERT INTO TeamMember(TeamMemberId, TeamId, FirstName, MiddleName, LastName, Title, IsManager) VALUES
+(NEWID(), @TeamId, 'Maggie', 'Lynn', 'Brown', 'Financial Analyst', 0),
+(NEWID(), @TeamId, 'Tim', 'D.', 'Hart', 'Manager of Finance', 1)
 
--- Sales and Marketing
+-- Finance Team
 SELECT @TeamId = TeamId FROM Team WHERE TeamName = 'Sales and Marketing'
-SELECT @TeamMemberId = TeamMemberId FROM TeamMember WHERE FirstName = 'Robert'
-INSERT INTO TeamMembership (TeamMemberId, TeamId) VALUES(@TeamMemberId, @TeamId)
-SELECT @TeamMemberId = TeamMemberId FROM TeamMember WHERE FirstName = 'Clark'
-INSERT INTO TeamMembership (TeamMemberId, TeamId) VALUES(@TeamMemberId, @TeamId)
+INSERT INTO TeamMember(TeamMemberId, TeamId, FirstName, MiddleName, LastName, Title, IsManager) VALUES
+(NEWID(), @TeamId, 'Robert', null, 'Knight', 'Account Representative', 0),
+(NEWID(), @TeamId, 'Clark', 'Kevin', 'Whitman', 'Manager of Sales', 1)
 
 INSERT INTO ObjectiveKeyResult (ObjectiveKeyResultId, Description, StartDate, EndDate) VALUES
 (NEWID(), 'Q1 ProductOne Dev Team OKRs', '2020/01/01', '2020/03/31'),	-- Two OKR groups for each team, Q1 and Q2

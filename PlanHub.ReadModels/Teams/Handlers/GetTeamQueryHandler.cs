@@ -20,12 +20,11 @@ FROM
 WHERE TeamId = @teamId;
 
 SELECT
-    tm.TeamMemberId, tship.TeamId, tm.FirstName, tm.MiddleName, tm.LastName, tm.Title, tm.IsManager
+    TeamMemberId, TeamId, FirstName, MiddleName, LastName, Title, IsManager
 FROM
-    TeamMembership tship
-LEFT JOIN TeamMember tm
-    ON tm.TeamMemberId = tship.TeamMemberId
-WHERE tship.TeamId = @teamId;";
+    TeamMember
+WHERE
+    TeamId = @teamId;";
 
         public GetTeamQueryHandler(IConfiguration configuration)
         {
@@ -36,12 +35,14 @@ WHERE tship.TeamId = @teamId;";
         {
             using(var connection = new SqlConnection(_configuration.GetConnectionString("PlanHub")))
             {
-                var results = await connection.QueryMultipleAsync(GetSql, new { query.TeamId });
-                var team = results.ReadSingle<GetTeamReadModel>();
-                var teamMembers = results.Read<TeamMemberReadModel>().ToList();
-                team.TeamMembers = teamMembers;
+                using (var results = await connection.QueryMultipleAsync(GetSql, new { query.TeamId }))
+                {
+                    var team = results.ReadSingle<GetTeamReadModel>();
+                    var teamMembers = results.Read<TeamMemberReadModel>().ToList();
+                    team.TeamMembers = teamMembers;
 
-                return team;
+                    return team;
+                }
             }
         }
     }

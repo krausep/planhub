@@ -19,12 +19,10 @@ FROM
 ORDER BY TeamName;
 
 SELECT
-    tm.TeamMemberId, tship.TeamId, tm.FirstName, tm.MiddleName, tm.LastName, tm.Title, tm.IsManager
+    TeamMemberId, TeamId, FirstName, MiddleName, LastName, Title, IsManager
 FROM
-    TeamMembership tship
-LEFT JOIN TeamMember tm
-    ON tm.TeamMemberId = tship.TeamMemberId";
-
+    TeamMember;";
+    
         public GetTeamsQueryHandler(IConfiguration configuration)
         {
             _configuration = configuration;
@@ -34,15 +32,17 @@ LEFT JOIN TeamMember tm
         {
             using (var connection = new SqlConnection(_configuration.GetConnectionString("PlanHub")))
             {
-                var results = await connection.QueryMultipleAsync(GetSql);
-                var teams = results.Read<TeamReadModel>().ToList();
-                var teamMembers = results.Read<TeamMemberReadModel>().ToList();
-                foreach(var team in teams)
+                using (var results = await connection.QueryMultipleAsync(GetSql))
                 {
-                    team.TeamMembers = teamMembers.FindAll(tm => tm.TeamId == team.TeamId);
-                }
+                    var teams = results.Read<TeamReadModel>().ToList();
+                    var teamMembers = results.Read<TeamMemberReadModel>().ToList();
+                    foreach (var team in teams)
+                    {
+                        team.TeamMembers = teamMembers.FindAll(tm => tm.TeamId == team.TeamId);
+                    }
 
-                return new GetTeamsReadModel(teams);
+                    return new GetTeamsReadModel(teams);
+                }
             }
         }
     }

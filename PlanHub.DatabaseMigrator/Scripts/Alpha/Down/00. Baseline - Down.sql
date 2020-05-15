@@ -14,8 +14,6 @@ DROP TABLE ObjectiveKeyResult
 
 DROP TABLE OrganizationChart
 
-DROP TABLE TeamMembership
-
 DROP TABLE Team
 
 DROP TABLE TeamMember

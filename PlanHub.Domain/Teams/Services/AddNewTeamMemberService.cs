@@ -9,29 +9,25 @@ namespace PlanHub.Domain.Teams.Services
     public class AddNewTeamMemberService : IAddNewTeamMemberService
     {
         private readonly ITeamRepository _teamRepository;
-        private readonly ITeamMembershipRepository _teamMembershipRepository;
-        public AddNewTeamMemberService(ITeamRepository teamRepository, ITeamMembershipRepository teamMembershipRepository)
+        private readonly ITeamMemberRepository _teamMemberRepository;
+        public AddNewTeamMemberService(ITeamRepository teamRepository, ITeamMemberRepository teamMemberRepository)
         {
             _teamRepository = teamRepository;
-            _teamMembershipRepository = teamMembershipRepository;
+            _teamMemberRepository = teamMemberRepository;
         }
 
         public async Task AddTeamMemberToTeam(Guid teamId, Guid teamMemberId)
         {
-            var existingTeamMembership = await _teamMembershipRepository.GetTeamMembershipByTeamMemberId(teamMemberId);
-            if(existingTeamMembership != null)
-            {
-                throw new DomainValidationException($"Team member {teamMemberId} already belongs to a team.");
-            }
+            var teamMember = await _teamMemberRepository.GetTeamMemberAsync(teamMemberId);
 
-            if(existingTeamMembership.TeamId == teamId)
+            if(teamMember.TeamId == teamId)
             {
                 throw new DomainValidationException($"Team member {teamMemberId} already belongs to this team.");
             }
 
             var team = await _teamRepository.GetByTeamId(teamId);
-            team.AddNewTeamMember(teamMemberId);
-            await _teamRepository.Update(team);
+            teamMember.ChangeTeam(teamId);
+            await _teamMemberRepository.UpdateAsync(teamMember);
         }
     }
 }

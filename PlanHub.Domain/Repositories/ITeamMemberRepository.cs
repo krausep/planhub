@@ -7,8 +7,10 @@ namespace PlanHub.Domain.Repositories
 {
     public interface ITeamMemberRepository
     {
-        Task<TeamMember> GetTeamMember(Guid teamMemberId);
+        Task<TeamMember> GetTeamMemberAsync(Guid teamMemberId);
 
-        Task<List<TeamMember>> GetTeamMembersByTeamId(Guid teamId);
+        Task<List<TeamMember>> GetTeamMembersByTeamIdAsync(Guid teamId);
+
+        Task UpdateAsync(TeamMember teamMember);
     }
 }
