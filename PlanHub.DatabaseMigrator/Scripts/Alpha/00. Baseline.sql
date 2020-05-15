@@ -55,6 +55,7 @@ REFERENCES [dbo].[TeamMember] ([TeamMemberId])
 
 CREATE TABLE ObjectiveKeyResult (
 	[ObjectiveKeyResultId] UNIQUEIDENTIFIER,
+	[Description] NVARCHAR(100),
 	[StartDate] DATE,
 	[EndDate] DATE,
 	CONSTRAINT [PK_ObjectiveKeyResult] PRIMARY KEY CLUSTERED
@@ -76,9 +77,8 @@ CREATE TABLE Objective (
 	[ObjectiveId] UNIQUEIDENTIFIER,
 	[ObjectiveKeyResultId] UNIQUEIDENTIFIER NOT NULL,
 	[Description] NVARCHAR(200) NOT NULL,
-	[PercentageWeight] DECIMAL(3,0),
-	[InheritedFromObjective] UNIQUEIDENTIFIER,
 	[OrganizationLevelId] INT NOT NULL,	-- Company, Team, Team Member
+	[PercentageWeight] DECIMAL(3,0),
 	CONSTRAINT [PK_Objective] PRIMARY KEY CLUSTERED
 	(
 		[ObjectiveId] ASC
@@ -90,7 +90,6 @@ REFERENCES [dbo].[ObjectiveKeyResult] ([ObjectiveKeyResultId])
 
 ALTER TABLE Objective WITH CHECK ADD CONSTRAINT [FK_Objective_OrganzationLevelId] FOREIGN KEY([OrganizationLevelId])
 REFERENCES [dbo].[OrganizationLevel] ([OrganizationLevelId])
-
 
 CREATE TABLE CompanyObjective (
 	[CompanyObjectiveId] UNIQUEIDENTIFIER NOT NULL,

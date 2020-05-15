@@ -4,7 +4,7 @@
 (3, 'Team Member')
 
 INSERT INTO Team(TeamId, TeamName) VALUES
-(NEWID(), 'ProductOne Developmenmt Team'),
+(NEWID(), 'ProductOne Development Team'),
 (NEWID(), 'Finance'),
 (NEWID(), 'Sales and Marketing')
 
@@ -20,7 +20,7 @@ DECLARE @TeamMemberId UNIQUEIDENTIFIER
 DECLARE @TeamId UNIQUEIDENTIFIER
 
 -- Development Team
-SELECT @TeamId = TeamId FROM Team WHERE TeamName = 'ProductOne Developmenmt Team'
+SELECT @TeamId = TeamId FROM Team WHERE TeamName = 'ProductOne Development Team'
 SELECT @TeamMemberId = TeamMemberId FROM TeamMember WHERE FirstName = 'Bill'
 INSERT INTO TeamMembership (TeamMemberId, TeamId) VALUES(@TeamMemberId, @TeamId)
 SELECT @TeamMemberId = TeamMemberId FROM TeamMember WHERE FirstName = 'Marisol'
@@ -64,3 +64,24 @@ INSERT INTO Objective (ObjectiveId, ObjectiveKeyResultId, Description, Organizat
 (NEWID(), @ObjectiveKeyResultId, 'Stay In The Hearts and Minds of Customers', 2, 20),
 (NEWID(), @ObjectiveKeyResultId, 'Bi-Weekly Updates to Company Blog', 2, 20)
 
+DECLARE @ObjectiveId UNIQUEIDENTIFIER
+SELECT @ObjectiveId = ObjectiveId FROM Objective WHERE Description = 'Improve Customer Experience Through Fast Response to Issues'
+INSERT INTO CompanyObjective(CompanyObjectiveId, ObjectiveId) VALUES (NEWID(), @ObjectiveId)
+
+SELECT @ObjectiveId = ObjectiveId FROM Objective WHERE Description = 'Close the Books'
+INSERT INTO CompanyObjective(CompanyObjectiveId, ObjectiveId) VALUES (NEWID(), @ObjectiveId)
+
+SELECT @TeamId = TeamId FROM Team WHERE TeamName = 'ProductOne Development Team'
+SELECT @ObjectiveId = ObjectiveId FROM Objective WHERE Description = 'Improve Quality Feedback Loop'
+INSERT INTO TeamObjective(TeamObjectiveId, ObjectiveId, TeamId) VALUES(NEWID(), @ObjectiveId, @TeamId)
+
+SELECT @TeamId = TeamId FROM Team WHERE TeamName = 'Finance'
+SELECT @ObjectiveId = ObjectiveId FROM Objective WHERE Description = 'Timely, Accurate Invoices to Customers'
+INSERT INTO TeamObjective(TeamObjectiveId, ObjectiveId, TeamId) VALUES(NEWID(), @ObjectiveId, @TeamId)
+
+SELECT @TeamId = TeamId FROM Team WHERE TeamName = 'Sales and Marketing'
+SELECT @ObjectiveId = ObjectiveId FROM Objective WHERE Description = 'Stay In The Hearts and Minds of Customers'
+INSERT INTO TeamObjective(TeamObjectiveId, ObjectiveId, TeamId) VALUES(NEWID(), @ObjectiveId, @TeamId)
+
+SELECT @ObjectiveId = ObjectiveId FROM Objective WHERE Description = 'Bi-Weekly Updates to Company Blog'
+INSERT INTO TeamObjective(TeamObjectiveId, ObjectiveId, TeamId) VALUES(NEWID(), @ObjectiveId, @TeamId)
